@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>XOR – Master DSA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f1a;
+    --bg3: #13131f;
+    --card: #161625;
+    --border: #1e1e35;
+    --accent: #7c3aed;
+    --accent2: #a855f7;
+    --glow: #7c3aed55;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --subtle: #94a3b8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 62px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1.55rem; font-weight: 900; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #a855f7, #7c3aed, #3b82f6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, #7c3aed, #3b82f6);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 800; color: #fff;
+    -webkit-text-fill-color: #fff;
+    box-shadow: 0 0 20px var(--glow);
+  }
+
+  .nav-links {
+    display: flex; gap: 2rem; list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--subtle); text-decoration: none;
+    font-size: 0.875rem; font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+  .nav-actions { display: flex; gap: 0.75rem; }
+
+  .btn {
+    padding: 0.45rem 1.1rem; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-ghost {
+    background: transparent; color: var(--subtle);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #fff;
+    box-shadow: 0 0 18px var(--glow);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 28px var(--glow); }
+
+  /* PAGE LAYOUT */
+  .app { display: flex; height: calc(100vh - 62px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px; min-width: 260px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 1.25rem 0;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .sidebar-section { margin-bottom: 0.25rem; }
+
+  .sidebar-header {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .sidebar-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.55rem 1.25rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--subtle);
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .sidebar-item:hover { background: var(--card); color: var(--text); border-left-color: var(--border); }
+  .sidebar-item.active { background: rgba(124,58,237,0.12); color: #a855f7; border-left-color: var(--accent); }
+
+  .sidebar-item-left { display: flex; align-items: center; gap: 0.65rem; }
+  .sidebar-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .sidebar-item.active .sidebar-dot { background: var(--accent2); }
+
+  .badge {
+    font-size: 0.65rem; padding: 1px 7px;
+    border-radius: 99px; font-weight: 600;
+  }
+  .badge-easy { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge-medium { background: rgba(234,179,8,0.15); color: var(--yellow); }
+  .badge-hard { background: rgba(239,68,68,0.15); color: var(--red); }
+  .badge-new { background: rgba(59,130,246,0.15); color: var(--blue); }
+
+  /* MAIN */
+  .main { flex: 1; overflow-y: auto; background: var(--bg); }
+  .main::-webkit-scrollbar { width: 6px; }
+  .main::-webkit-scrollbar-track { background: transparent; }
+  .main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* HERO SECTION */
+  .hero {
+    padding: 3.5rem 3rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; top: -60px; right: -80px;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.3rem 0.9rem;
+    background: rgba(124,58,237,0.12);
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 99px;
+    font-size: 0.75rem; font-weight: 600;
+    color: var(--accent2);
+    margin-bottom: 1.2rem;
+  }
+
+  .hero h1 {
+    font-size: 2.6rem; font-weight: 900;
+    line-height: 1.15; letter-spacing: -1px;
+    margin-bottom: 0.9rem;
+    max-width: 560px;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, #a855f7, #7c3aed, #3b82f6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    color: var(--subtle); font-size: 1rem;
+    max-width: 480px; line-height: 1.7; margin-bottom: 1.8rem;
+  }
+
+  .hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+
+  .btn-lg { padding: 0.7rem 1.6rem; font-size: 0.95rem; border-radius: 10px; }
+
+  /* STATS */
+  .stats-row {
+    display: flex; gap: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat { }
+  .stat-num { font-size: 1.6rem; font-weight: 800; color: var(--text); }
+  .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 0.1rem; }
+
+  /* PROGRESS CARD */
+  .section { padding: 2rem 3rem; }
+  .section-title {
+    font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 1.25rem; color: var(--text);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* TOPIC GRID */
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .topic-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .topic-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .topic-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.15); }
+  .topic-card:hover::before { opacity: 1; }
+
+  .topic-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-bottom: 0.9rem;
+  }
+
+  .topic-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .topic-count { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.9rem; }
+
+  .progress-bar {
+    height: 4px; background: var(--border); border-radius: 99px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.5s ease;
+  }
+
+  /* PROBLEM TABLE */
+  .problem-table { width: 100%; border-collapse: collapse; }
+
+  .problem-table th {
+    text-align: left; padding: 0.65rem 1rem;
+    font-size: 0.72rem; font-weight: 700;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .problem-table th:first-child { border-radius: 8px 0 0 0; }
+  .problem-table th:last-child { border-radius: 0 8px 0 0; }
+
+  .problem-row {
+    border-bottom: 1px solid rgba(30,30,53,0.5);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .problem-row:hover { background: var(--card); }
+
+  .problem-row td { padding: 0.75rem 1rem; font-size: 0.87rem; }
+
+  .problem-title { color: var(--text); font-weight: 500; }
+  .problem-title:hover { color: var(--accent2); }
+
+  .check-icon { color: var(--green); font-size: 1rem; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.7rem; font-weight: 600;
+    background: rgba(124,58,237,0.12);
+    color: var(--accent2);
+    margin-right: 4px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex; gap: 0.25rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    padding: 0 3rem;
+  }
+
+  .tab {
+    padding: 0.7rem 1.1rem;
+    font-size: 0.87rem; font-weight: 500;
+    color: var(--muted); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s; margin-bottom: -1px;
+    background: none; border-top: none; border-left: none; border-right: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+  .tab:hover { color: var(--text); }
+
+  /* SEARCH BAR */
+  .search-bar {
+    display: flex; align-items: center; gap: 0.75rem;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.6rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .search-bar input {
+    background: none; border: none; outline: none;
+    font-size: 0.88rem; color: var(--text); flex: 1;
+    font-family: 'Inter', sans-serif;
+  }
+  .search-bar input::placeholder { color: var(--muted); }
+
+  /* FILTER ROW */
+  .filter-row {
+    display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem;
+  }
+
+  .filter-btn {
+    padding: 0.35rem 0.85rem;
+    border-radius: 7px;
+    font-size: 0.78rem; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border);
+    background: var(--card); color: var(--subtle);
+    transition: all 0.15s; font-family: 'Inter', sans-serif;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: rgba(124,58,237,0.12);
+    border-color: var(--accent);
+    color: var(--accent2);
+  }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    width: 300px; min-width: 300px;
+    background: var(--bg2);
+    border-left: 1px solid var(--border);
+    overflow-y: auto; padding: 1.5rem;
+    display: flex; flex-direction: column; gap: 1.5rem;
+  }
+  .right-panel::-webkit-scrollbar { width: 4px; }
+  .right-panel::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .panel-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.1rem;
+  }
+
+  .panel-card-title {
+    font-size: 0.82rem; font-weight: 700;
+    color: var(--subtle); text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 0.9rem;
+  }
+
+  /* STREAK */
+  .streak-num { font-size: 2.2rem; font-weight: 900; }
+  .streak-sub { font-size: 0.78rem; color: var(--muted); }
+
+  .heatmap {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 3px; margin-top: 0.75rem;
+  }
+
+  .heat-cell {
+    aspect-ratio: 1; border-radius: 3px;
+    background: var(--border);
+  }
+  .heat-cell.l1 { background: rgba(124,58,237,0.25); }
+  .heat-cell.l2 { background: rgba(124,58,237,0.5); }
+  .heat-cell.l3 { background: rgba(124,58,237,0.75); }
+  .heat-cell.l4 { background: #7c3aed; }
+
+  /* LEADERBOARD */
+  .lb-item {
+    display: flex; align-items: center; gap: 0.65rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid rgba(30,30,53,0.6);
+  }
+  .lb-item:last-child { border-bottom: none; }
+
+  .lb-rank { font-size: 0.8rem; font-weight: 700; color: var(--muted); width: 22px; }
+  .lb-rank.gold { color: #f59e0b; }
+  .lb-rank.silver { color: #94a3b8; }
+  .lb-rank.bronze { color: #b45309; }
+
+  .lb-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+
+  .lb-name { font-size: 0.83rem; font-weight: 500; flex: 1; }
+  .lb-score { font-size: 0.78rem; color: var(--accent2); font-weight: 600; }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--muted); font-size: 0.8rem;
+  }
+
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--accent2); }
+
+  /* Scrollbar for main */
+  .main::-webkit-scrollbar { width: 6px; }
+  .main::-webkit-scrollbar-thumb { background: var(--border); }
+
+  /* Glow chip */
+  .glow-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 99px;
+    font-size: 0.72rem; font-weight: 700;
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.25);
+    color: var(--green);
+  }
+
+  /* Code font */
+  code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--accent2); }
+
+  @media (max-width: 1100px) {
+    .right-panel { display: none; }
+  }
+  @media (max-width: 800px) {
+    .sidebar { display: none; }
+    .hero h1 { font-size: 2rem; }
+    .section { padding: 1.5rem; }
+    .tabs { padding: 0 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="logo-icon">X⊕R</div>
+    XOR
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" class="active">Problems</a></li>
+    <li><a href="#">Sheets</a></li>
+    <li><a href="#">Learn</a></li>
+    <li><a href="#">Contests</a></li>
+    <li><a href="#">Discuss</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn btn-ghost">Sign In</button>
+    <button class="btn btn-primary">Get Started</button>
+  </div>
+</nav>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-header">DSA Sheets</div>
+      <a class="sidebar-item active" href="#">
+        <div class="sidebar-item-left">
+          <div class="sidebar-dot"></div>
+          XOR 450 Sheet
+        </div>
+        <span class="badge badge-new">450</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left">
+          <div class="sidebar-dot"></div>
+          Blind 75
+        </div>
+        <span class="badge badge-easy">75</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left">
+          <div class="sidebar-dot"></div>
+          NeetCode 150
+        </div>
+        <span class="badge badge-medium">150</span>
+      </a>
+    </div>
+
+    <div class="sidebar-section" style="margin-top:0.5rem">
+      <div class="sidebar-header">Topics</div>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Arrays</div>
+        <span style="font-size:0.72rem;color:var(--muted)">42</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Strings</div>
+        <span style="font-size:0.72rem;color:var(--muted)">38</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Linked Lists</div>
+        <span style="font-size:0.72rem;color:var(--muted)">24</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Trees</div>
+        <span style="font-size:0.72rem;color:var(--muted)">35</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Graphs</div>
+        <span style="font-size:0.72rem;color:var(--muted)">29</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Dynamic Programming</div>
+        <span style="font-size:0.72rem;color:var(--muted)">51</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Recursion & Backtracking</div>
+        <span style="font-size:0.72rem;color:var(--muted)">18</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Binary Search</div>
+        <span style="font-size:0.72rem;color:var(--muted)">22</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Heaps & Priority Queue</div>
+        <span style="font-size:0.72rem;color:var(--muted)">16</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Bit Manipulation</div>
+        <span style="font-size:0.72rem;color:var(--muted)">14</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Tries</div>
+        <span style="font-size:0.72rem;color:var(--muted)">9</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Segment Trees</div>
+        <span style="font-size:0.72rem;color:var(--muted)">11</span>
+      </a>
+    </div>
+
+    <div class="sidebar-section" style="margin-top:0.5rem">
+      <div class="sidebar-header">Companies</div>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Google</div>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Amazon</div>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Microsoft</div>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Meta</div>
+      </a>
+      <a class="sidebar-item" href="#">
+        <div class="sidebar-item-left"><div class="sidebar-dot"></div> Flipkart</div>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-label">⚡ New: XOR 450 Sheet is live</div>
+      <h1>Master DSA with <span>XOR</span> — Think in Bitwise</h1>
+      <p>Structured learning paths, 450+ curated problems, video explanations, and editorial solutions to crack any coding interview.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-lg">🚀 Start Solving</button>
+        <button class="btn btn-ghost btn-lg">Explore Sheets →</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-num">450+</div>
+          <div class="stat-label">Curated Problems</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">38K+</div>
+          <div class="stat-label">Active Learners</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">120+</div>
+          <div class="stat-label">Video Solutions</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">95%</div>
+          <div class="stat-label">Placement Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOPIC GRID -->
+    <div class="section">
+      <div class="section-title">📚 Topics</div>
+      <div class="topic-grid">
+        <div class="topic-card">
+          <div class="topic-icon" style="background:rgba(59,130,246,0.12)">🧮</div>
+          <div class="topic-name">Arrays & Hashing</div>
+          <div class="topic-count">42 problems</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:68%"></div></div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon" style="background:rgba(34,197,94,0.12)">🌳</div>
+          <div class="topic-name">Trees & BST</div>
+          <div class="topic-count">35 problems</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:45%"></div></div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon" style="background:rgba(234,179,8,0.12)">🔗</div>
+          <div class="topic-name">Linked Lists</div>
+          <div class="topic-count">24 problems</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon" style="background:rgba(239,68,68,0.12)">📊</div>
+          <div class="topic-name">Dynamic Programming</div>
+          <div class="topic-count">51 problems</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon" style="background:rgba(168,85,247,0.12)">🕸️</div>
+          <div class="topic-name">Graphs & BFS/DFS</div>
+          <div class="topic-count">29 problems</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:52%"></div></div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon" style="background:rgba(124,58,237,0.12)">⚡</div>
+          <div class="topic-name">Bit Manipulation</div>
+          <div class="topic-count">14 problems</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon" style="background:rgba(20,184,166,0.12)">🔍</div>
+          <div class="topic-name">Binary Search</div>
+          <div class="topic-count">22 problems</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon" style="background:rgba(249,115,22,0.12)">🎯</div>
+          <div class="topic-name">Recursion & Backtracking</div>
+          <div class="topic-count">18 problems</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:35%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="setTab(this)">All Problems</button>
+      <button class="tab" onclick="setTab(this)">Easy</button>
+      <button class="tab" onclick="setTab(this)">Medium</button>
+      <button class="tab" onclick="setTab(this)">Hard</button>
+      <button class="tab" onclick="setTab(this)">Bookmarked</button>
+    </div>
+
+    <!-- PROBLEM LIST -->
+    <div class="section" style="padding-top:0">
+      <div class="search-bar">
+        <span style="color:var(--muted)">🔍</span>
+        <input type="text" placeholder="Search problems by title, tag, or company..." />
+        <span class="glow-chip">✓ 127 solved</span>
+      </div>
+      <div class="filter-row">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Arrays</button>
+        <button class="filter-btn">Strings</button>
+        <button class="filter-btn">Linked Lists</button>
+        <button class="filter-btn">Trees</button>
+        <button class="filter-btn">DP</button>
+        <button class="filter-btn">Graphs</button>
+        <button class="filter-btn">Bit Manipulation</button>
+      </div>
+      <table class="problem-table">
+        <thead>
+          <tr>
+            <th style="width:40px">✓</th>
+            <th>Title</th>
+            <th>Tags</th>
+            <th>Difficulty</th>
+            <th>Companies</th>
+            <th>Resources</th>
+          </tr>
+        </thead>
+        <tbody id="problem-tbody">
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      <div>© 2025 XOR — Built for learners, by learners.</div>
+      <div style="display:flex;gap:1.5rem">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">GitHub</a>
+        <a href="#">Discord</a>
+      </div>
+    </footer>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside class="right-panel">
+
+    <!-- Streak -->
+    <div class="panel-card">
+      <div class="panel-card-title">🔥 Current Streak</div>
+      <div class="streak-num">12 <span style="font-size:1rem">days</span></div>
+      <div class="streak-sub" style="margin-top:0.2rem">Keep going! Best: 21 days</div>
+      <div class="heatmap" style="margin-top:1rem" id="heatmap"></div>
+    </div>
+
+    <!-- Progress Ring -->
+    <div class="panel-card">
+      <div class="panel-card-title">📈 Your Progress</div>
+      <div style="display:flex;gap:1rem;margin-top:0.25rem">
+        <div style="flex:1">
+          <div style="font-size:0.8rem;color:var(--green);font-weight:700">Easy</div>
+          <div style="font-size:1.2rem;font-weight:800">42 <span style="font-size:0.75rem;color:var(--muted)">/85</span></div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:0.8rem;color:var(--yellow);font-weight:700">Med</div>
+          <div style="font-size:1.2rem;font-weight:800">61 <span style="font-size:0.75rem;color:var(--muted)">/210</span></div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:0.8rem;color:var(--red);font-weight:700">Hard</div>
+          <div style="font-size:1.2rem;font-weight:800">24 <span style="font-size:0.75rem;color:var(--muted)">/155</span></div>
+        </div>
+      </div>
+      <div style="margin-top:0.9rem;display:flex;flex-direction:column;gap:6px">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:3px"><span style="color:var(--green)">Easy</span><span style="color:var(--muted)">49%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:49%;background:var(--green)"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:3px"><span style="color:var(--yellow)">Medium</span><span style="color:var(--muted)">29%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:29%;background:var(--yellow)"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:3px"><span style="color:var(--red)">Hard</span><span style="color:var(--muted)">15%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:15%;background:var(--red)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="panel-card">
+      <div class="panel-card-title">🏆 Leaderboard</div>
+      <div id="leaderboard"></div>
+    </div>
+
+    <!-- Daily Challenge -->
+    <div class="panel-card" style="background:linear-gradient(135deg,rgba(124,58,237,0.12),rgba(59,130,246,0.08));border-color:rgba(124,58,237,0.3)">
+      <div class="panel-card-title">⚡ Daily Challenge</div>
+      <div style="font-size:0.9rem;font-weight:600;margin-bottom:0.4rem">Trapping Rain Water</div>
+      <span class="badge badge-hard">Hard</span>
+      <div style="margin-top:0.75rem;font-size:0.78rem;color:var(--muted);line-height:1.6">Given n non-negative integers representing elevation map widths of 1 unit, compute how much water it can trap.</div>
+      <button class="btn btn-primary" style="width:100%;margin-top:0.9rem;justify-content:center">Solve Now →</button>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+  // --- Problems data ---
+  const problems = [
+    { id:1, solved:true,  title:"Two Sum",                        tags:["Array","Hash Map"],       diff:"Easy",   companies:["Google","Amazon"] },
+    { id:2, solved:true,  title:"Best Time to Buy & Sell Stock",  tags:["Array","DP"],             diff:"Easy",   companies:["Amazon"] },
+    { id:3, solved:false, title:"Contains Duplicate",             tags:["Array","Hash Set"],       diff:"Easy",   companies:["Apple"] },
+    { id:4, solved:true,  title:"Product of Array Except Self",   tags:["Array","Prefix Sum"],     diff:"Medium", companies:["Amazon","Meta"] },
+    { id:5, solved:false, title:"Maximum Subarray (Kadane's)",    tags:["Array","DP"],             diff:"Medium", companies:["Amazon","Microsoft"] },
+    { id:6, solved:true,  title:"3Sum",                           tags:["Array","Two Pointer"],    diff:"Medium", companies:["Google","Facebook"] },
+    { id:7, solved:false, title:"Container With Most Water",      tags:["Array","Two Pointer"],    diff:"Medium", companies:["Amazon"] },
+    { id:8, solved:false, title:"Trapping Rain Water",            tags:["Array","Stack"],          diff:"Hard",   companies:["Google","Amazon","Meta"] },
+    { id:9, solved:true,  title:"Valid Parentheses",              tags:["Stack","String"],         diff:"Easy",   companies:["Amazon","Meta"] },
+    { id:10,solved:false, title:"Minimum Stack",                  tags:["Stack","Design"],         diff:"Medium", companies:["Amazon"] },
+    { id:11,solved:false, title:"Reverse Linked List",            tags:["Linked List"],            diff:"Easy",   companies:["Amazon","Microsoft"] },
+    { id:12,solved:true,  title:"Merge Two Sorted Lists",         tags:["Linked List"],            diff:"Easy",   companies:["Google"] },
+    { id:13,solved:false, title:"Reorder Linked List",            tags:["Linked List","Two Pointer"],diff:"Medium",companies:["Facebook"] },
+    { id:14,solved:false, title:"Detect Cycle in Linked List",    tags:["Linked List","Floyd's"],  diff:"Medium", companies:["Amazon","Google"] },
+    { id:15,solved:false, title:"LRU Cache",                      tags:["Linked List","Hash Map"], diff:"Hard",   companies:["Amazon","Google","Meta"] },
+    { id:16,solved:true,  title:"Invert Binary Tree",             tags:["Tree","BFS"],             diff:"Easy",   companies:["Google"] },
+    { id:17,solved:false, title:"Maximum Depth of Binary Tree",   tags:["Tree","DFS"],             diff:"Easy",   companies:["Amazon"] },
+    { id:18,solved:false, title:"Lowest Common Ancestor",         tags:["Tree","DFS"],             diff:"Medium", companies:["Amazon","Microsoft"] },
+    { id:19,solved:false, title:"Binary Tree Level Order",        tags:["Tree","BFS"],             diff:"Medium", companies:["Google","Amazon"] },
+    { id:20,solved:false, title:"Serialize and Deserialize Tree", tags:["Tree","Design"],          diff:"Hard",   companies:["Google","Meta"] },
+    { id:21,solved:false, title:"Word Search",                    tags:["Backtracking","Matrix"],  diff:"Medium", companies:["Amazon","Microsoft"] },
+    { id:22,solved:false, title:"N-Queens",                       tags:["Backtracking"],           diff:"Hard",   companies:["Google"] },
+    { id:23,solved:true,  title:"Binary Search",                  tags:["Binary Search"],          diff:"Easy",   companies:["All"] },
+    { id:24,solved:false, title:"Find Minimum in Rotated Array",  tags:["Binary Search"],          diff:"Medium", companies:["Amazon","Microsoft"] },
+    { id:25,solved:false, title:"Median of Two Sorted Arrays",    tags:["Binary Search","Array"],  diff:"Hard",   companies:["Google","Amazon","Meta"] },
+    { id:26,solved:false, title:"Climbing Stairs",                tags:["DP"],                     diff:"Easy",   companies:["Amazon","Google"] },
+    { id:27,solved:false, title:"Longest Common Subsequence",     tags:["DP","String"],            diff:"Medium", companies:["Google","Meta"] },
+    { id:28,solved:false, title:"0/1 Knapsack",                   tags:["DP"],                     diff:"Medium", companies:["Amazon","Flipkart"] },
+    { id:29,solved:false, title:"Edit Distance",                  tags:["DP","String"],            diff:"Hard",   companies:["Google"] },
+    { id:30,solved:false, title:"Number of Islands",              tags:["Graph","BFS/DFS"],        diff:"Medium", companies:["Amazon","Microsoft","Google"] },
+  ];
+
+  const diffColor = { Easy:"badge-easy", Medium:"badge-medium", Hard:"badge-hard" };
+
+  function renderProblems(data) {
+    const tbody = document.getElementById('problem-tbody');
+    tbody.innerHTML = data.map(p => `
+      <tr class="problem-row">
+        <td>${p.solved ? '<span class="check-icon">✓</span>' : '<span style="color:var(--border)">○</span>'}</td>
+        <td><span class="problem-title">${p.title}</span></td>
+        <td>${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</td>
+        <td><span class="badge ${diffColor[p.diff]}">${p.diff}</span></td>
+        <td style="font-size:0.78rem;color:var(--muted)">${p.companies.slice(0,2).join(', ')}</td>
+        <td>
+          <button onclick="event.stopPropagation()" style="background:none;border:none;cursor:pointer;color:var(--accent2);font-size:0.78rem;font-weight:600">▶ Video</button>
+          <button onclick="event.stopPropagation()" style="background:none;border:none;cursor:pointer;color:var(--subtle);font-size:0.78rem;font-weight:600;margin-left:6px">📄 Note</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+  renderProblems(problems);
+
+  // Tab filter
+  function setTab(el) {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    const t = el.textContent.trim();
+    const filtered = t === 'All Problems' ? problems
+      : t === 'Bookmarked' ? problems.slice(0,5)
+      : problems.filter(p=>p.diff===t);
+    renderProblems(filtered);
+  }
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      const cat = this.textContent.trim();
+      const filtered = cat==='All' ? problems
+        : problems.filter(p=>p.tags.some(t=>t.toLowerCase().includes(cat.toLowerCase())||cat.toLowerCase().includes(t.toLowerCase())));
+      renderProblems(filtered);
+    });
+  });
+
+  // Search
+  document.querySelector('.search-bar input').addEventListener('input', function(){
+    const q = this.value.toLowerCase();
+    const filtered = q ? problems.filter(p=>
+      p.title.toLowerCase().includes(q)||
+      p.tags.some(t=>t.toLowerCase().includes(q))||
+      p.companies.some(c=>c.toLowerCase().includes(q))
+    ) : problems;
+    renderProblems(filtered);
+  });
+
+  // Heatmap
+  const heatmap = document.getElementById('heatmap');
+  const levels = [0,0,0,1,0,2,0,1,3,4,2,3,1,0,2,4,3,2,1,0,3,4,4,2,1,3,2,4,3,1,2,4,3,1,2];
+  levels.forEach(l=>{
+    const cell = document.createElement('div');
+    cell.className = 'heat-cell' + (l?' l'+l:'');
+    heatmap.appendChild(cell);
+  });
+
+  // Leaderboard
+  const lb = [
+    {name:'Arjun K.', score:2841, color:'#7c3aed'},
+    {name:'Priya S.', score:2719, color:'#3b82f6'},
+    {name:'Rahul M.', score:2650, color:'#22c55e'},
+    {name:'Sneha R.', score:2488, color:'#f59e0b'},
+    {name:'Dev P.',   score:2301, color:'#ec4899'},
+  ];
+  const rankClass = ['gold','silver','bronze','',''];
+  document.getElementById('leaderboard').innerHTML = lb.map((u,i)=>`
+    <div class="lb-item">
+      <div class="lb-rank ${rankClass[i]}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div>
+      <div class="lb-avatar" style="background:${u.color}">${u.name[0]}</div>
+      <div class="lb-name">${u.name}</div>
+      <div class="lb-score">${u.score.toLocaleString()}</div>
+    </div>
+  `).join('');
+</script>
+</body>
+</html>

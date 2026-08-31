@@ -1,0 +1,15 @@
+{
+  "name": "new_xor-root",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Root workspace config for XOR DSA Platform",
+  "scripts": {
+    "install:backend": "npm install --prefix backend",
+    "install:frontend": "npm install --prefix frontend",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "postinstall": "npm run install:all",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev": "npm run dev:backend & npm run dev:frontend"
+  }
+}
